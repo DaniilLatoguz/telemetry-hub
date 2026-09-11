@@ -10,6 +10,12 @@ Work in progress. See stages in commit history
 ## Decisions
 
 <!-- one line per non-obvious decision, added as the project grows -->
+- **XOR checksum, not CRC-16.** Enough for a learning protocol; catches
+  single-byte errors; one pass. Production would use CRC-16/CCITT.
+- **Big-endian.** Network byte order; matches most device protocols.
+- **Resync drops one byte on bad packet**, not the whole packet, because
+  the length field itself may be corrupted.
+
 
 ## Packet format
 

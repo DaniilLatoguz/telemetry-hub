@@ -3,7 +3,9 @@ name = "telemetry-hub"
 version = "0.1.0"
 description = "Serial telemetry ingestion, storage and live streaming"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "pyserial>=3.5",
+]
 
 [build-system]
 requires = ["setuptools>=68"]
@@ -21,3 +23,4 @@ select = ["E", "F", "I", "B", "UP"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
