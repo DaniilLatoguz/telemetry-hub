@@ -16,7 +16,13 @@ Work in progress. See stages in commit history
 - **Resync drops one byte on bad packet**, not the whole packet, because
   the length field itself may be corrupted.
 
-
+- **Reader runs in a thread, not asyncio.** pyserial is blocking; one
+  daemon thread with a timeout-based read loop is the simplest reliable
+  option. asyncio enters at the API layer (stage 6).
+- **Reader emits via callback, not a queue.** Keeps it independent of
+  consumers; stage 6 fans out to DB queue and asyncio with one function.
+- **Reconnect on SerialException** with fixed delay; stop() interrupts the
+  delay via Event.wait().
 ## Packet format
 
 | Field    | Size  | Type    | Notes                          |
@@ -36,3 +42,13 @@ Work in progress. See stages in commit history
 | voltage_mv  | uint16  |
 | frame_id    | uint32  |
 
+## Benchmarks
+
+### Timestamp index (1,000,000 rows, range query over 300 s)
+
+| Plan       | Execution time |
+|------------|----------------|
+| Seq Scan   | ~120 ms        |
+| Index Scan | ~0.4 ms        |
+
+Index: B-tree on `timestamp`. Range queries are the primary access pattern.
